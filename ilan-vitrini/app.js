@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-// Kendi anahtarların
 const firebaseConfig = {
     apiKey: "AIzaSyAQ_AVGuAYShAvFjipmXzV3k3sfp2dbBUE",
     authDomain: "grandproject-6692e.firebaseapp.com",
@@ -17,17 +16,22 @@ const db = getFirestore(app);
 let suAnkiIlanId = "", ilanSahibiId = ""; 
 let gercekFiyat = 0;
 
-// URL'den Parametre Okuma (Linke Tıklandığında Otomatik Açılması İçin)
+// URL'den ID'yi Yakala
 const urlParams = new URLSearchParams(window.location.search);
 const linktekiId = urlParams.get('id');
 
+// BÜYÜ BURADA: Linkte ID yoksa sistemi kilitliyoruz.
 if (linktekiId) {
-    // URL'de ID varsa test kutusunu gizle ve doğrudan ilanı çek
-    document.getElementById('testAlani').style.display = "none";
     ilaniEkranaBas(linktekiId);
+} else {
+    document.body.innerHTML = `
+        <div style="text-align:center; padding: 50px 20px; font-family: Arial;">
+            <h2 style="color: #d32f2f;">⚠️ Geçersiz İlan Bağlantısı</h2>
+            <p style="color: #666; margin-top:10px;">Aradığınız ilan yayından kaldırılmış veya link hatalı olabilir.</p>
+        </div>
+    `;
 }
 
-// Sekme Değiştirme Fonksiyonu (HTML'den çağrılması için window objesine ekliyoruz)
 window.sekmeDegistir = function(sekmeId, tiklananButon) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -35,14 +39,6 @@ window.sekmeDegistir = function(sekmeId, tiklananButon) {
     tiklananButon.classList.add('active');
 };
 
-// Manuel Buton ile Çekme (Linkte ID yoksa çalışan yedek sistem)
-document.getElementById('btnGetir').addEventListener('click', () => {
-    const manuelId = document.getElementById('testIlanId').value.trim();
-    if(!manuelId) return alert("Lütfen ilan numarasını girin.");
-    ilaniEkranaBas(manuelId);
-});
-
-// Asıl Veritabanı Çekme Fonksiyonu
 async function ilaniEkranaBas(ilanId) {
     try {
         const ilanSnap = await getDoc(doc(db, "ilanlar", ilanId));
@@ -62,18 +58,21 @@ async function ilaniEkranaBas(ilanId) {
             suAnkiIlanId = ilanSnap.id; 
             ilanSahibiId = data.sahip_id; 
             
-            document.getElementById('testAlani').style.display = "none";
             document.getElementById('anaKonteyner').style.display = "block";
             document.getElementById('ekran-vitrin').style.display = "block";
         } else { 
-            alert("İlan yayından kaldırılmış veya bulunamadı!"); 
+            document.body.innerHTML = `
+                <div style="text-align:center; padding: 50px 20px; font-family: Arial;">
+                    <h2 style="color: #d32f2f;">❌ İlan Bulunamadı</h2>
+                    <p style="color: #666; margin-top:10px;">Bu ilan yayından kaldırılmış.</p>
+                </div>
+            `;
         }
     } catch (error) { 
         alert("Bağlantı Hatası: " + error.message); 
     }
 }
 
-// Satın Al Butonu -> Sipariş Özeti
 document.getElementById('btnSatinAlAdim1').addEventListener('click', () => {
     const komisyonBedeli = Math.round(gercekFiyat * 0.05);
     const toplamTutar = gercekFiyat + komisyonBedeli;
@@ -89,14 +88,12 @@ document.getElementById('btnSatinAlAdim1').addEventListener('click', () => {
     document.getElementById('btnGeri').style.display = "inline";
 });
 
-// Ödemeye Geç Butonu
 document.getElementById('btnOdemeyeGec').addEventListener('click', () => {
     document.getElementById('ekran-ozet').style.display = "none";
     document.getElementById('ekran-odeme').style.display = "block";
     document.getElementById('headerBaslik').innerText = "ödeme ve teslimat";
 });
 
-// Geri Butonu
 document.getElementById('btnGeri').addEventListener('click', () => {
     if (document.getElementById('ekran-ozet').style.display === "block") {
         document.getElementById('ekran-ozet').style.display = "none";
@@ -110,7 +107,6 @@ document.getElementById('btnGeri').addEventListener('click', () => {
     }
 });
 
-// Siparişi Tamamla
 document.getElementById('btnSiparisTamamla').addEventListener('click', async () => {
     const isim = document.getElementById('aliciIsim').value.trim();
     const tel = document.getElementById('aliciTel').value.trim();
@@ -142,4 +138,3 @@ document.getElementById('btnSiparisTamamla').addEventListener('click', async () 
         btn.disabled = false; 
     }
 });
-
