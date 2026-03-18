@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/ilan/:slug/:id",
+      "destination": "/ilan-vitrini/index.html?id=:id"
+    }
+  ]
+}
