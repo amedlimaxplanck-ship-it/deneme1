@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Kontrol Merkezi</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #0f172a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
+        .container { background: #1e293b; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 500px; text-align: center; border: 1px solid #334155; }
+        .logo { font-size: 50px; margin-bottom: 10px; }
+        h1 { margin-bottom: 10px; color: #f8fafc; font-size: 24px; }
+        p { color: #94a3b8; margin-bottom: 30px; font-size: 14px; }
+
+        .menu-list { display: flex; flex-direction: column; gap: 15px; }
+        
+        .menu-btn { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #334155; color: white; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 16px; transition: 0.3s; border-left: 5px solid transparent; }
+        .menu-btn:hover { background: #475569; transform: translateY(-2px); }
+        
+        .btn-patron { border-left-color: #ef4444; } /* Kırmızı */
+        .btn-bayi { border-left-color: #3b82f6; } /* Mavi */
+        .btn-vitrin { border-left-color: #10b981; } /* Yeşil */
+
+        .btn-icon { font-size: 24px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">🚀</div>
+        <h1>Sistem Kontrol Merkezi</h1>
+        <p>Geliştirici Modu: Lütfen giriş yapmak istediğiniz paneli seçin.</p>
+
+        <div class="menu-list">
+            <a href="/1-patron-paneli/" class="menu-btn btn-patron">
+                <span>👑 Ana Patron Paneli</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            
+            <a href="/2-musteri-paneli/" class="menu-btn btn-bayi">
+                <span>💼 Bayi / Müşteri Paneli</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            
+            <a href="/3-ilan-vitrini/" class="menu-btn btn-vitrin">
+                <span>🛒 Son Kullanıcı İlan Vitrini</span>
+                <span class="btn-icon">➔</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
