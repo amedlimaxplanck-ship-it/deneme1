@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayi Paneli | Sipariş ve İlan Yönetimi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Bayi Kontrol Paneli</h2>
+            <span id="bayiKimlik" class="bayi-id-badge">ID: BAYI_001</span>
+        </header>
+
+        <div class="card">
+            <h3>📦 Gelen Siparişler ve Loglar</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Müşteri</th><th>Ürün</th><th>Tarih</th><th>Dekont</th><th>Evre (Durum)</th></tr>
+                    </thead>
+                    <tbody id="siparisTablosu"><tr><td colspan='5'>Yükleniyor...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Yeni İlan / Link Oluştur</h3>
+            <div class="form-group">
+                <label>İlan Başlığı</label>
+                <input type="text" id="ilanBaslik" placeholder="Örn: iPhone 11 - 128 GB">
+            </div>
+            <div class="form-group">
+                <label>Fiyat (TL)</label>
+                <input type="number" id="ilanFiyat" placeholder="Örn: 15000">
+            </div>
+            <div class="form-group">
+                <label>Satıcı / Mağaza Adı</label>
+                <input type="text" id="saticiAdi" placeholder="Örn: Mert İletişim">
+            </div>
+            <div class="form-group">
+                <label>İlan Açıklaması</label>
+                <textarea id="ilanAciklama" rows="3" placeholder="Ürün özelliklerini ve detaylarını yazın..."></textarea>
+            </div>
+            <button id="btnIlanYarat" class="btn-success">Hemen Link Oluştur</button>
+        </div>
+
+        <div class="card">
+            <h3>Yayındaki İlanlarım</h3>
+            <ul id="ilanTablosu" class="ilan-listesi"><li>Bağlantı kuruluyor...</li></ul>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
 
