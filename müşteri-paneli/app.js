@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+// DİKKAT: Buraya 'onSnapshot' komutunu ekledik. Canlı yayının sırrı bu!
+import { getFirestore, collection, getDocs, addDoc, query, where, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAQ_AVGuAYShAvFjipmXzV3k3sfp2dbBUE",
@@ -13,12 +14,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Şimdilik sistemde tek bayi var gibi ID atadık. İleride giriş yapıldığında değişecek.
 const aktifBayiID = "BAYI_001"; 
 
 const ilanTablosu = document.getElementById('ilanTablosu');
 const siparisTablosu = document.getElementById('siparisTablosu');
 
+// 1. İLANLARI GETİR (Burası aynı kalıyor)
 async function ilanlariGetir() {
     try {
         const q = query(collection(db, "ilanlar"), where("sahip_id", "==", aktifBayiID));
@@ -32,6 +33,7 @@ async function ilanlariGetir() {
     } catch (error) { ilanTablosu.innerHTML = "<li>Hata oluştu.</li>"; }
 }
 
+// 2. YENİ İLAN YARAT (Burası aynı kalıyor)
 document.getElementById('btnIlanYarat').addEventListener('click', async () => {
     const baslik = document.getElementById('ilanBaslik').value.trim();
     const fiyat = document.getElementById('ilanFiyat').value.trim();
@@ -43,12 +45,8 @@ document.getElementById('btnIlanYarat').addEventListener('click', async () => {
     document.getElementById('btnIlanYarat').innerText = "Oluşturuluyor...";
     try {
         await addDoc(collection(db, "ilanlar"), { 
-            sahip_id: aktifBayiID, 
-            baslik: baslik, 
-            fiyat: Number(fiyat), 
-            satici: satici,
-            aciklama: aciklama,
-            tarih: new Date().toISOString() 
+            sahip_id: aktifBayiID, baslik: baslik, fiyat: Number(fiyat), 
+            satici: satici, aciklama: aciklama, tarih: new Date().toISOString() 
         });
         
         document.getElementById('ilanBaslik').value = ''; 
@@ -60,28 +58,52 @@ document.getElementById('btnIlanYarat').addEventListener('click', async () => {
     finally { document.getElementById('btnIlanYarat').innerText = "Hemen Link Oluştur"; }
 });
 
-async function siparisleriGetir() {
-    try {
-        const q = query(collection(db, "siparisler"), where("bayi_id", "==", aktifBayiID));
-        const querySnapshot = await getDocs(q);
+// 3. İŞTE BÜYÜNÜN KOPTUĞU YER: CANLI SİPARİŞ DİNLEYİCİSİ
+function siparisleriCanliDinle() {
+    const q = query(collection(db, "siparisler"), where("bayi_id", "==", aktifBayiID));
+    
+    // getDocs yerine onSnapshot kullanıyoruz. Bu kod sayfa açık kaldığı sürece veritabanını dinler!
+    onSnapshot(q, (querySnapshot) => {
         siparisTablosu.innerHTML = ""; 
-        if (querySnapshot.empty) { siparisTablosu.innerHTML = "<tr><td colspan='5'>Sipariş yok.</td></tr>"; return; }
+        if (querySnapshot.empty) { 
+            siparisTablosu.innerHTML = "<tr><td colspan='5'>Sipariş yok.</td></tr>"; 
+            return; 
+        }
+        
         querySnapshot.forEach((docSnap) => {
             const sip = docSnap.data();
             const secenekler = ["Aşama 1: Ödeme Bekleniyor", "Aşama 2: Ödeme Onaylandı", "Aşama 3: Kargolandı"];
             let opts = secenekler.map(s => `<option value="${s}" ${sip.durum === s ? "selected" : ""}>${s}</option>`).join("");
-            siparisTablosu.innerHTML += `<tr><td><strong>${sip.alici_isim}</strong><br><small>${sip.alici_telefon}</small></td><td>${sip.ilan_baslik}</td><td><small>${sip.tarih}</small></td><td><button class="dekont-btn" onclick="alert('Dekont Açılacak')">Görüntüle</button></td><td><select class="durum-secici" onchange="durumGuncelle('${docSnap.id}', this.value)">${opts}</select></td></tr>`;
+            
+            // Fiyat bilgisini de yeşil renkli olarak tabloya ekledik
+            const tutarGosterimi = sip.odenen_tutar ? `<br><small style="color:#27ae60; font-weight:bold;">+${sip.odenen_tutar} TL</small>` : "";
+
+            siparisTablosu.innerHTML += `
+            <tr>
+                <td><strong>${sip.alici_isim}</strong><br><small>${sip.alici_telefon}</small></td>
+                <td>${sip.ilan_baslik} ${tutarGosterimi}</td>
+                <td><small>${sip.tarih}</small></td>
+                <td><button class="dekont-btn" onclick="alert('Dekont Açılacak')">Görüntüle</button></td>
+                <td><select class="durum-secici" onchange="durumGuncelle('${docSnap.id}', this.value)">${opts}</select></td>
+            </tr>`;
         });
-    } catch (error) { siparisTablosu.innerHTML = "<tr><td colspan='5'>Hata oluştu.</td></tr>"; }
+    }, (error) => {
+        console.error("Canlı dinleme koptu:", error);
+        siparisTablosu.innerHTML = "<tr><td colspan='5' style='color:red;'>Bağlantı koptu, hata oluştu.</td></tr>";
+    });
 }
 
+// 4. DURUM GÜNCELLEME
 window.durumGuncelle = async (siparisId, yeniDurum) => {
     try { 
+        // Veritabanını güncelliyoruz. onSnapshot bunu da algılayıp tabloyu anında kendi kendine yenileyecek!
         await updateDoc(doc(db, "siparisler", siparisId), { durum: yeniDurum }); 
-        alert("Evre güncellendi!"); 
     } 
     catch (error) { alert("Hata: " + error.message); }
 };
 
-window.onload = () => { ilanlariGetir(); siparisleriGetir(); };
-
+// Sayfa yüklendiğinde ilanları getir ve canlı yayını başlat
+window.onload = () => { 
+    ilanlariGetir(); 
+    siparisleriCanliDinle(); 
+};
