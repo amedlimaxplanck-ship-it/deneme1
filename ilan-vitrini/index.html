@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlan Detayları | Param Güvende</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header-top"></div>
+    <div class="header-main">
+        <span id="btnGeri" class="btn-back">❮ Geri</span>
+        <span id="headerBaslik">ilan detayları</span>
+    </div>
+
+    <div id="testAlani">
+        <input type="text" id="testIlanId" placeholder="İlan No (Link ID) Giriniz">
+        <button id="btnGetir">İlana Git</button>
+    </div>
+
+    <div class="app-container" id="anaKonteyner" style="display: none;">
+        
+        <div id="ekran-vitrin">
+            <div class="ilan-image"><span style="font-size: 50px;">📷</span></div>
+            <div class="ilan-header">
+                <div class="ilan-price" id="lblFiyat">-- TL</div>
+                <div class="ilan-title" id="lblBaslik">Yükleniyor...</div>
+            </div>
+
+            <div class="trust-badges">
+                <div class="trust-badge-item">
+                    <div class="badge-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="#00a651" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <div class="badge-text"><strong>Paranız Güvende</strong><small>Ödemeniz havuz hesabında güvenle tutulur.</small></div>
+                </div>
+                <div class="trust-badge-item">
+                    <div class="badge-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="#00a651" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="badge-text"><strong>Güvenli Kargo</strong><small>Satıcı ürünü kargoya vermeden para aktarılmaz.</small></div>
+                </div>
+                <div class="trust-badge-item">
+                    <div class="badge-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="#00a651" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                    </div>
+                    <div class="badge-text"><strong>Kolay İade</strong><small>Ürün beklentiniz gibi değilse sorunsuz iade edin.</small></div>
+                </div>
+            </div>
+
+            <div class="seller-box">
+                <div class="seller-avatar" id="lblSaticiHarf">M</div>
+                <div class="seller-info-text">
+                    <strong id="lblSaticiAdi">Yükleniyor...</strong><br>
+                    <small>Kurumsal Üye • 2. Yıl</small>
+                </div>
+            </div>
+
+            <div class="tab-menu">
+                <div class="tab-btn active" onclick="sekmeDegistir('detaylar', this)">Bilgiler</div>
+                <div class="tab-btn" onclick="sekmeDegistir('aciklama', this)">Açıklama</div>
+                <div class="tab-btn" onclick="sekmeDegistir('konum', this)">Konum</div>
+            </div>
+
+            <div id="sekme-detaylar" class="tab-content active">
+                <div class="detail-row"><strong class="key">İlan No</strong> <span id="lblIlanNo" class="value red">--</span></div>
+                <div class="detail-row"><strong class="key">Durumu</strong> <span class="value">Sıfır</span></div>
+            </div>
+            
+            <div id="sekme-aciklama" class="tab-content"><div id="lblAciklama">Yükleniyor...</div></div>
+            
+            <div id="sekme-konum" class="tab-content" style="text-align:center;">
+                <h3>📍 İstanbul</h3>
+                <div class="map-placeholder">Harita Yüklenemedi</div>
+            </div>
+
+            <div class="bottom-bar">
+                <button class="btn-call" onclick="alert('Satıcı aranıyor...')">📞 Ara</button>
+                <button class="btn-buy-param" id="btnSatinAlAdim1">🛡️ Satın Al</button>
+            </div>
+        </div>
+
+        <div id="ekran-ozet">
+            <h3>Sipariş Özeti</h3>
+            <div class="summary-box">
+                <div class="summary-row"><span>Ürün Bedeli</span><strong id="ozetUrunFiyat">-- TL</strong></div>
+                <div class="summary-row"><span>Güvenli İşlem Bedeli (%5)</span><strong id="ozetKomisyon">-- TL</strong></div>
+                <div class="summary-row"><span>Kargo Ücreti</span><strong>Ücretsiz</strong></div>
+                <div class="summary-row total"><span>Toplam</span><span id="ozetToplam">-- TL</span></div>
+            </div>
+            <p class="info-text">* Param Güvende ile paranız havuza aktarılır. Ürünü teslim alıp onayladığınızda satıcıya geçer.</p>
+            <button class="btn-next" id="btnOdemeyeGec">Ödemeye Geç</button>
+        </div>
+
+        <div id="ekran-odeme">
+            <h3>Ödeme ve Teslimat</h3>
+            <div class="iban-box">
+                <div class="iban-title">GÜVENLİ HAVUZ IBAN NUMARASI</div>
+                TR12 3456 7890 1234 5678 90
+            </div>
+            <div class="form-group"><label>Ad Soyad</label><input type="text" id="aliciIsim" placeholder="Örn: Ahmet Yılmaz"></div>
+            <div class="form-group"><label>Cep Telefonu</label><input type="tel" id="aliciTel" placeholder="0 (5__) ___ __ __"></div>
+            <div class="upload-btn" onclick="alert('Galeri açılacak.')">📷 Dekont Fotoğrafı Ekle</div>
+            <button class="btn-next btn-green" id="btnSiparisTamamla">Siparişi Tamamla</button>
+        </div>
+
+        <div id="ekran-basarili">
+            <div class="success-icon">✅</div>
+            <h2>Siparişiniz Alındı</h2>
+            <p>Ödemeniz güvenli havuz hesabına aktarıldı. Satıcı onayının ardından kargo süreci başlayacaktır.</p>
+            <button class="btn-call" style="margin-top:20px; width:100%;" onclick="location.reload()">Ana Sayfaya Dön</button>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
 
