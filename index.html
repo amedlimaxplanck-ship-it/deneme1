@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlan Detayları | Param Güvende</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', Helvetica, sans-serif; }
+        body { background-color: #f5f5f5; color: #333; }
+        
+        .header-top { background: #ffe800; height: 4px; width: 100%; }
+        .header-main { background: #fff; padding: 15px; text-align: center; border-bottom: 1px solid #ddd; position: relative; }
+        .header-main span { font-size: 18px; font-weight: bold; color: #0059a3; letter-spacing: -0.5px; }
+        .btn-back { position: absolute; left: 15px; top: 15px; color: #0059a3; font-weight: bold; text-decoration: none; cursor: pointer; display: none; }
+
+        #testAlani { background: #fff; margin: 20px auto; max-width: 500px; padding: 20px; border: 1px solid #ddd; text-align: center; }
+        #testAlani input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; font-size: 15px; }
+        #testAlani button { background: #0059a3; color: white; border: none; padding: 12px 20px; width: 100%; font-weight: bold; font-size: 15px; cursor: pointer; }
+
+        .app-container { max-width: 500px; margin: 0 auto; background: #fff; min-height: 100vh; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; position: relative; padding-bottom: 80px; }
+        
+        /* EKRAN 1: İLAN VİTRİNİ */
+        #ekran-vitrin { display: none; }
+        .ilan-image { width: 100%; height: 280px; background: #e8e8e8; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #999; }
+        .ilan-header { padding: 15px; border-bottom: 1px solid #eee; }
+        .ilan-price { font-size: 26px; font-weight: bold; color: #000; margin-bottom: 8px; }
+        .ilan-title { font-size: 16px; color: #0059a3; font-weight: bold; line-height: 1.4; }
+
+        /* Trust Badges (Güven Rozetleri) */
+        .trust-badges { padding: 15px; background: #fff; border-bottom: 5px solid #f5f5f5; }
+        .trust-badge-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .trust-badge-item:last-child { margin-bottom: 0; }
+        .badge-icon { width: 32px; height: 32px; background: #e8f5e9; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #4caf50; }
+        .badge-text strong { font-size: 14px; color: #333; display: block; }
+        .badge-text small { font-size: 12px; color: #777; }
+
+        .tab-menu { display: flex; background: #fafafa; border-bottom: 1px solid #ddd; border-top: 1px solid #eee; }
+        .tab-btn { flex: 1; padding: 15px 0; text-align: center; font-size: 14px; font-weight: bold; color: #555; cursor: pointer; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: #0059a3; border-bottom: 3px solid #0059a3; background: #fff; }
+        .tab-content { display: none; background: #fff; padding: 15px; }
+        .tab-content.active { display: block; }
+
+        .seller-box { padding: 15px; background: #fcfcfc; border-bottom: 1px solid #eee; border-top: 1px solid #eee; display: flex; align-items: center; gap: 15px; margin-top: 10px; }
+        .seller-avatar { width: 45px; height: 45px; background: #0059a3; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 18px; text-transform: uppercase; }
+
+        /* Sabit Alt Bar (Satın Al / Ara) */
+        .bottom-bar { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: #fff; border-top: 1px solid #ddd; padding: 10px 15px; display: flex; gap: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100; }
+        .btn-call { flex: 1; background: #fff; color: #0059a3; border: 2px solid #0059a3; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 15px; cursor: pointer; text-align: center; }
+        .btn-buy-param { flex: 2; background: #00a651; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+        /* EKRAN 2: SİPARİŞ ÖZETİ (%5 Hesaplama) */
+        #ekran-ozet { display: none; padding: 20px 15px; background: #f9f9f9; min-height: 100vh; }
+        .summary-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #555; }
+        .summary-row.total { border-top: 1px solid #eee; padding-top: 12px; font-size: 18px; font-weight: bold; color: #000; margin-bottom: 0; }
+        .btn-next { background: #0059a3; color: white; border: none; padding: 16px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+
+        /* EKRAN 3: ÖDEME BİLDİRİMİ (IBAN VE DEKONT) */
+        #ekran-odeme { display: none; padding: 20px 15px; }
+        .iban-box { background: #fff; border: 1px solid #e0e0e0; padding: 15px; text-align: center; font-family: monospace; font-size: 16px; font-weight: bold; margin-bottom: 20px; border-left: 4px solid #ffe800; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; outline: none; }
+        .upload-btn { background: #f8f9fa; color: #0059a3; border: 2px dashed #0059a3; padding: 15px; width: 100%; text-align: center; font-weight: bold; margin-bottom: 20px; cursor: pointer; border-radius: 4px; }
+
+        /* EKRAN 4: BAŞARILI */
+        #ekran-basarili { display: none; padding: 50px 20px; text-align: center; }
+        #ekran-basarili h2 { color: #4caf50; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header-top"></div>
+    <div class="header-main">
+        <span id="btnGeri" class="btn-back">❮ Geri</span>
+        <span id="headerBaslik">ilan detayları</span>
+    </div>
+
+    <div id="testAlani">
+        <input type="text" id="testIlanId" placeholder="İlan No (Link ID) Giriniz">
+        <button id="btnGetir">İlana Git</button>
+    </div>
+
+    <div class="app-container" id="anaKonteyner" style="display: none;">
+        
+        <div id="ekran-vitrin">
+            <div class="ilan-image"><span style="font-size: 50px;">📷</span></div>
+            <div class="ilan-header">
+                <div class="ilan-price" id="lblFiyat">-- TL</div>
+                <div class="ilan-title" id="lblBaslik">Yükleniyor...</div>
+            </div>
+
+            <div class="trust-badges">
+                <div class="trust-badge-item">
+                    <div class="badge-icon">🛡️</div>
+                    <div class="badge-text"><strong>Paranız Güvende</strong><small>Ödemeniz havuz hesabında güvenle tutulur.</small></div>
+                </div>
+                <div class="trust-badge-item">
+                    <div class="badge-icon">📦</div>
+                    <div class="badge-text"><strong>Güvenli Kargo</strong><small>Satıcı ürünü kargoya vermeden para aktarılmaz.</small></div>
+                </div>
+                <div class="trust-badge-item">
+                    <div class="badge-icon">↩️</div>
+                    <div class="badge-text"><strong>Kolay İade</strong><small>Ürün beklentiniz gibi değilse sorunsuz iade edin.</small></div>
+                </div>
+            </div>
+
+            <div class="seller-box">
+                <div class="seller-avatar" id="lblSaticiHarf">M</div>
+                <div class="seller-info-text">
+                    <strong id="lblSaticiAdi" style="color:#0059a3; font-size:16px;">Yükleniyor...</strong><br>
+                    <small style="color:#777; font-size:12px;">Kurumsal Üye • 2. Yıl</small>
+                </div>
+            </div>
+
+            <div class="tab-menu">
+                <div class="tab-btn active" onclick="sekmeDegistir('detaylar', this)">Bilgiler</div>
+                <div class="tab-btn" onclick="sekmeDegistir('aciklama', this)">Açıklama</div>
+                <div class="tab-btn" onclick="sekmeDegistir('konum', this)">Konum</div>
+            </div>
+
+            <div id="sekme-detaylar" class="tab-content active">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                    <strong style="color:#666;">İlan No</strong> <span id="lblIlanNo" style="color:#d32f2f; font-weight:bold;">--</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                    <strong style="color:#666;">Durumu</strong> <span style="font-weight:bold;">Sıfır</span>
+                </div>
+            </div>
+            <div id="sekme-aciklama" class="tab-content">
+                <div id="lblAciklama" style="line-height:1.6;">Yükleniyor...</div>
+            </div>
+            <div id="sekme-konum" class="tab-content" style="text-align:center;">
+                <h3 style="margin-bottom:10px;">📍 İstanbul</h3>
+                <div style="background:#f0f0f0; padding:30px; border-radius:8px; color:#888;">Harita Yüklenemedi</div>
+            </div>
+
+            <div class="bottom-bar">
+                <button class="btn-call" onclick="alert('Satıcı aranıyor...')">📞 Ara</button>
+                <button class="btn-buy-param" id="btnSatinAlAdim1">🛡️ Satın Al</button>
+            </div>
+        </div>
+
+        <div id="ekran-ozet">
+            <h3 style="margin-bottom:15px; color:#333;">Sipariş Özeti</h3>
+            <div class="summary-box">
+                <div class="summary-row"><span>Ürün Bedeli</span><strong id="ozetUrunFiyat">-- TL</strong></div>
+                <div class="summary-row"><span>Güvenli İşlem Bedeli (%5)</span><strong id="ozetKomisyon">-- TL</strong></div>
+                <div class="summary-row"><span>Kargo Ücreti</span><strong>Ücretsiz</strong></div>
+                <div class="summary-row total"><span>Toplam</span><span id="ozetToplam" style="color:#00a651;">-- TL</span></div>
+            </div>
+            <p style="font-size:12px; color:#777; margin-bottom:20px; line-height:1.5;">* Param Güvende ile paranız havuza aktarılır. Ürünü teslim alıp onayladığınızda satıcıya geçer.</p>
+            <button class="btn-next" id="btnOdemeyeGec">Ödemeye Geç</button>
+        </div>
+
+        <div id="ekran-odeme">
+            <h3 style="margin-bottom:15px; color:#333;">Ödeme ve Teslimat</h3>
+            <div class="iban-box">
+                <div style="font-size: 11px; color: #777; margin-bottom: 5px;">GÜVENLİ HAVUZ IBAN NUMARASI</div>
+                TR12 3456 7890 1234 5678 90
+            </div>
+            <div class="form-group"><label>Ad Soyad</label><input type="text" id="aliciIsim" placeholder="Örn: Ahmet Yılmaz"></div>
+            <div class="form-group"><label>Cep Telefonu</label><input type="tel" id="aliciTel" placeholder="0 (5__) ___ __ __"></div>
+            <div class="upload-btn" onclick="alert('Galeri açılacak.')">📷 Dekont Fotoğrafı Ekle</div>
+            <button class="btn-next" id="btnSiparisTamamla" style="background:#00a651;">Siparişi Tamamla</button>
+        </div>
+
+        <div id="ekran-basarili">
+            <div style="font-size:60px; margin-bottom:20px;">✅</div>
+            <h2>Siparişiniz Alındı</h2>
+            <p style="color:#555; line-height:1.6; margin-top:10px;">Ödemeniz güvenli havuz hesabına aktarıldı. Satıcı onayının ardından kargo süreci başlayacaktır.</p>
+            <button class="btn-call" style="margin-top:20px; width:100%;" onclick="location.reload()">Ana Sayfaya Dön</button>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAQ_AVGuAYShAvFjipmXzV3k3sfp2dbBUE",
+          authDomain: "grandproject-6692e.firebaseapp.com",
+          projectId: "grandproject-6692e",
+          storageBucket: "grandproject-6692e.firebasestorage.app",
+          messagingSenderId: "486382284214",
+          appId: "1:486382284214:web:6552ef16b927a09f3b6517"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let suAnkiIlanId = "", ilanSahibiId = ""; 
+        let gercekFiyat = 0; // Matematik işlemleri için fiyatı hafızada tutacağız
+
+        // Sekme Değiştirme Fonksiyonu
+        window.sekmeDegistir = function(sekmeId, tiklananButon) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('sekme-' + sekmeId).classList.add('active');
+            tiklananButon.classList.add('active');
+        };
+
+        // 1. İLAN GETİR
+        document.getElementById('btnGetir').addEventListener('click', async () => {
+            const ilanId = document.getElementById('testIlanId').value.trim();
+            if(!ilanId) return alert("Lütfen ilan numarasını girin.");
+            try {
+                const ilanSnap = await getDoc(doc(db, "ilanlar", ilanId));
+                if (ilanSnap.exists()) {
+                    const data = ilanSnap.data();
+                    
+                    document.getElementById('lblBaslik').innerText = data.baslik;
+                    gercekFiyat = data.fiyat; // Sayısal değeri kaydet
+                    document.getElementById('lblFiyat').innerText = gercekFiyat.toLocaleString('tr-TR') + " TL";
+                    document.getElementById('lblIlanNo').innerText = ilanSnap.id.substring(0, 8).toUpperCase();
+                    
+                    const saticiAdi = data.satici || "Bireysel Satıcı";
+                    document.getElementById('lblSaticiAdi').innerText = saticiAdi;
+                    document.getElementById('lblSaticiHarf').innerText = saticiAdi.charAt(0).toUpperCase();
+                    document.getElementById('lblAciklama').innerText = data.aciklama || "Açıklama girilmemiş.";
+
+                    suAnkiIlanId = ilanSnap.id; ilanSahibiId = data.sahip_id; 
+                    
+                    document.getElementById('testAlani').style.display = "none";
+                    document.getElementById('anaKonteyner').style.display = "block";
+                    document.getElementById('ekran-vitrin').style.display = "block";
+                } else { alert("İlan yayından kaldırılmış!"); }
+            } catch (error) { alert("Hata: " + error.message); }
+        });
+
+        // 2. SATIN AL BUTONUNA BASINCA -> SİPARİŞ ÖZETİNE GEÇ
+        document.getElementById('btnSatinAlAdim1').addEventListener('click', () => {
+            // %5 Komisyon Hesaplama Mantığı
+            const komisyonBedeli = Math.round(gercekFiyat * 0.05); // %5 hesapla ve küsüratı yuvarla
+            const toplamTutar = gercekFiyat + komisyonBedeli;
+
+            // Rakamları Özet Ekranına Bas
+            document.getElementById('ozetUrunFiyat').innerText = gercekFiyat.toLocaleString('tr-TR') + " TL";
+            document.getElementById('ozetKomisyon').innerText = komisyonBedeli.toLocaleString('tr-TR') + " TL";
+            document.getElementById('ozetToplam').innerText = toplamTutar.toLocaleString('tr-TR') + " TL";
+
+            // Ekranları Değiştir
+            document.getElementById('ekran-vitrin').style.display = "none";
+            document.getElementById('ekran-ozet').style.display = "block";
+            
+            // Üst başlığı ve geri butonunu ayarla
+            document.getElementById('headerBaslik').innerText = "sipariş özeti";
+            document.getElementById('btnGeri').style.display = "inline";
+        });
+
+        // 3. ÖDEMEYE GEÇ BUTONUNA BASINCA -> IBAN VE FORM EKRANINA GEÇ
+        document.getElementById('btnOdemeyeGec').addEventListener('click', () => {
+            document.getElementById('ekran-ozet').style.display = "none";
+            document.getElementById('ekran-odeme').style.display = "block";
+            document.getElementById('headerBaslik').innerText = "ödeme ve teslimat";
+        });
+
+        // GERİ BUTONU MANTIĞI
+        document.getElementById('btnGeri').addEventListener('click', () => {
+            if (document.getElementById('ekran-ozet').style.display === "block") {
+                document.getElementById('ekran-ozet').style.display = "none";
+                document.getElementById('ekran-vitrin').style.display = "block";
+                document.getElementById('headerBaslik').innerText = "ilan detayları";
+                document.getElementById('btnGeri').style.display = "none";
+            } else if (document.getElementById('ekran-odeme').style.display === "block") {
+                document.getElementById('ekran-odeme').style.display = "none";
+                document.getElementById('ekran-ozet').style.display = "block";
+                document.getElementById('headerBaslik').innerText = "sipariş özeti";
+            }
+        });
+
+        // 4. FİNAL: SİPARİŞİ TAMAMLA VE VERİTABANINA YAZ
+        document.getElementById('btnSiparisTamamla').addEventListener('click', async () => {
+            const isim = document.getElementById('aliciIsim').value.trim();
+            const tel = document.getElementById('aliciTel').value.trim();
+            const btn = document.getElementById('btnSiparisTamamla');
+            
+            if(isim === "" || tel === "") return alert("Lütfen iletişim bilgilerinizi eksiksiz doldurun.");
+
+            btn.innerText = "İşleminiz Yapılıyor..."; btn.disabled = true;
+            try {
+                // Toplam tutarı da veritabanına yazdırıyoruz ki bayi paneline yansısın
+                const toplamTutar = gercekFiyat + Math.round(gercekFiyat * 0.05);
+
+                await addDoc(collection(db, "siparisler"), {
+                    ilan_id: suAnkiIlanId, bayi_id: ilanSahibiId, 
+                    ilan_baslik: document.getElementById('lblBaslik').innerText,
+                    odenen_tutar: toplamTutar, // Yeni!
+                    alici_isim: isim, alici_telefon: tel, 
+                    durum: "Aşama 1: Ödeme Bekleniyor", tarih: new Date().toLocaleString('tr-TR')
+                });
+                
+                document.getElementById('ekran-odeme').style.display = "none";
+                document.getElementById('ekran-basarili').style.display = "block";
+                document.getElementById('headerBaslik').innerText = "işlem başarılı";
+                document.getElementById('btnGeri').style.display = "none";
+            } catch (error) { 
+                alert("Hata: " + error.message); 
+                btn.innerText = "Siparişi Tamamla"; btn.disabled = false; 
+            }
+        });
+    </script>
+</body>
+</html>
