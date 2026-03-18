@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Patron Paneli | Merkez Üs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Patron Paneli</h2>
+        <ul>
+            <li class="active">Lisans Yönetimi</li>
+            <li>Genel Ayarlar</li>
+            <li>Çıkış Yap</li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Müşteri / Bayi Listesi</h1>
+            <button id="btnYeniMusteri" class="btn-primary">+ Yeni Müşteri Ekle</button>
+        </header>
+
+        <section class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Müşteri ID</th>
+                        <th>İsim / Firma</th>
+                        <th>Kayıt Tarihi</th>
+                        <th>Durum</th>
+                        <th>Aksiyon</th>
+                    </tr>
+                </thead>
+                <tbody id="musteriTablosu">
+                    <tr><td colspan='5'>Bağlantı Kuruluyor...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <div id="musteriModal" class="modal">
+        <div class="modal-content">
+            <h3>Yeni Bayi Ekle</h3>
+            <input type="text" id="yeniIsim" placeholder="Bayi İsmi veya Firma Adı Girin">
+            <button id="btnKaydet" class="btn-primary">Sisteme Kaydet</button>
+            <button id="btnIptal" class="btn-secondary">İptal</button>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
 
